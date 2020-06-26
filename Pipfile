@@ -1,0 +1,26 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+bandit = "*"
+flake8 = "*"
+pylint = "*"
+mypy = "*"
+autopep8 = "*"
+flake8-mypy = "*"
+pytest = "*"
+
+[packages]
+pillow = "*"
+opencv-python = "*"
+numpy = "*"
+scipy = "*"
+scikit-learn = "*"
+pyopengl = "*"
+tweepy = "*"
+scikit-image = "*"
+
+[requires]
+python_version = "3.7"
