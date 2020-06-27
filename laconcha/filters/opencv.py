@@ -73,7 +73,7 @@ _color_convs = {
 }
 
 
-def cvtColor(o: ColorMode, n: ColorMode):
+def convert_color(o: ColorMode, n: ColorMode) -> Filter:
     conv = _color_convs[o][n]
 
     if isinstance(conv, (list, tuple)):
@@ -87,6 +87,25 @@ def cvtColor(o: ColorMode, n: ColorMode):
         @filter_opencv
         def f(img: np.ndarray) -> np.ndarray:
             return cv2.cvtColor(img, conv)
+
+    return f
+
+
+class ColorChannel(IntEnum):
+    B = 0
+    G = 1
+    R = 2
+
+
+def channel(ch: ColorChannel) -> Filter:
+    index = ch.value
+
+    def f(img: np.ndarray) -> np.ndarray:
+        for i in range(3):
+            if i != index:
+                img[:, :, i] = img[:, :, index]
+
+        return img
 
     return f
 
