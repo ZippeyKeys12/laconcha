@@ -101,11 +101,11 @@ def channel(ch: ColorChannel) -> Filter:
     index = ch.value
 
     def f(img: np.ndarray) -> np.ndarray:
-        for i in range(3):
-            if i != index:
-                img[:, :, i] = img[:, :, index]
-
-        return img
+        res = np.empty_like(img)
+        res[:, :, 0] = img[:, :, index]
+        res[:, :, 1] = img[:, :, index]
+        res[:, :, 2] = img[:, :, index]
+        return res
 
     return f
 
