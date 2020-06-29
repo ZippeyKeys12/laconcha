@@ -26,7 +26,7 @@ class Image:
 
         if init:
             self.mode = ImageMode.OPENCV
-            self.img = np.zeros((*size, 3), dtype=np.uint8)
+            self.img: RawImage = np.zeros((*size, 3), dtype=np.uint8)
 
     @staticmethod
     def open(fp):
@@ -62,6 +62,8 @@ class Image:
         elif self.mode == ImageMode.SCIKIT:
             self.img = cv2.cvtColor(self.img, cv2.COLOR_RGB2BGR)
 
+        self.mode = ImageMode.OPENCV
+
         return self.img
 
     def as_pil(self) -> PILImage:
@@ -72,6 +74,8 @@ class Image:
         elif self.mode == ImageMode.SCIKIT:
             self.img = pil_fromarray(self.img)
 
+        self.mode = ImageMode.PIL
+
         return self.img
 
     def as_scikit(self) -> np.ndarray:
@@ -80,6 +84,8 @@ class Image:
 
         elif self.mode == ImageMode.PIL:
             self.img = np.asarray(self.img)
+
+        self.mode = ImageMode.SCIKIT
 
         return self.img
 
