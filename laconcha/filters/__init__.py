@@ -6,4 +6,4 @@ from .decorators import filter_opencv, filter_pil, filter_scikit
 from .opencv import (ColorChannel, ColorMode, bilateral_filter, channel,
                      convert_color, gaussian_blur, mean_filter, median_filter)
 from .pil import spread
-from .scikit import swirl
+from .scikit import integral, swirl
