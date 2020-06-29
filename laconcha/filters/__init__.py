@@ -1,10 +1,11 @@
 # pylint: disable-all
 # flake8: noqa
 
-from .color_quant import color_quantization
 from .decorators import filter_opencv, filter_pil, filter_scikit
-from .opencv import (ColorChannel, ColorMode, bilateral_filter, channel,
-                     convert_color, gaussian_blur, mean_filter, median_filter)
-from .pil import spread
-from .scikit import integral, swirl
+from .numpy import (ColorMode, bilateral_filter, color_quantization,
+                    convert_color, gaussian_blur, mean_filter, median_filter,
+                    swirl)
+from .opencv import ColorChannel, channel
+from .pil import max_filter, min_filter, mode_filter, spread, unsharpen
+from .scikit import integral
 from .transforms import rotate, scale, shear, transform, translate

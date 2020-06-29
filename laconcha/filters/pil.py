@@ -13,40 +13,40 @@ def spread(distance: float) -> Filter:
 
 
 def unsharpen(radius: int = 2, percent: int = 150, threshold: int = 3) -> Filter:
-    mask = UnsharpMask(radius, percent, threshold)
+    kernel = UnsharpMask(radius, percent, threshold)
 
     @filter_pil
     def f(img: PILImage) -> PILImage:
-        return img.filter(mask)
+        return img.filter(kernel)
 
     return f
 
 
 def min_filter(size) -> Filter:
-    mask = MinFilter(size)
+    kernel = MinFilter(size)
 
     @filter_pil
     def f(img: PILImage) -> PILImage:
-        return img.filter(mask)
+        return img.filter(kernel)
 
     return f
 
 
 def max_filter(size) -> Filter:
-    mask = MaxFilter(size)
+    kernel = MaxFilter(size)
 
     @filter_pil
     def f(img: PILImage) -> PILImage:
-        return img.filter(mask)
+        return img.filter(kernel)
 
     return f
 
 
 def mode_filter(size) -> Filter:
-    mask = ModeFilter(size)
+    kernel = ModeFilter(size)
 
     @filter_pil
     def f(img: PILImage) -> PILImage:
-        return img.filter(mask)
+        return img.filter(kernel)
 
     return f
