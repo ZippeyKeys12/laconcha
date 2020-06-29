@@ -21,6 +21,8 @@ scikit-learn = "*"
 pyopengl = "*"
 tweepy = "*"
 scikit-image = "*"
+sympy = "*"
+streamlit = "*"
 
 [requires]
 python_version = "3.7"
