@@ -3,7 +3,6 @@ from typing import Optional, Tuple
 
 import cv2
 import numpy as np
-from sklearn.cluster import MiniBatchKMeans
 
 from .decorators import Filter, filter_opencv
 
@@ -100,6 +99,7 @@ class ColorChannel(IntEnum):
 def channel(ch: ColorChannel) -> Filter:
     index = ch.value
 
+    @filter_opencv
     def f(img: np.ndarray) -> np.ndarray:
         res = np.empty_like(img)
         res[:, :, 0] = img[:, :, index]
@@ -110,16 +110,6 @@ def channel(ch: ColorChannel) -> Filter:
     return f
 
 
-def color_quantization(n_clusters: int) -> Filter:
-    @filter_opencv
-    def f(img: np.ndarray) -> np.ndarray:
-        h, w, _ = img.shape
-        X = img.reshape((h * w, 3))
-        k_means = MiniBatchKMeans(n_clusters=n_clusters, random_state=0)
 
-        labels = k_means.fit_predict(X)
-        values = k_means.cluster_centers_.astype('uint8')
 
-        return values[labels].reshape((h, w, 3))
 
-    return f
