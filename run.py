@@ -6,14 +6,19 @@ import streamlit as st
 import SessionState
 from laconcha import Image
 from laconcha.filters import (ColorChannel, bilateral_filter, channel,
-                              color_quantization, gaussian_blur, mean_filter,
-                              median_filter, spread, swirl)
+                              color_quantization, gaussian_blur, integral,
+                              max_filter, mean_filter, median_filter,
+                              min_filter, mode_filter, rotate, scale, shear,
+                              spread, swirl, translate, unsharpen)
 
 # SETUP
 
 session_state: Any = SessionState.get(filters=[])
 
 filter_dict = {
+    'As OpenCV': (lambda: lambda i: Image.from_opencv(i.as_opencv()), lambda i: []),
+    'As PIL': (lambda: lambda i: Image.from_pil(i.as_pil()), lambda i: []),
+    'As Scikit': (lambda: lambda i: Image.from_scikit(i.as_scikit()), lambda i: []),
     'Bilateral Filter': (bilateral_filter, lambda i: [
         st.sidebar.slider('Diameter', 1, 15, 9, key=f'D{i}'),
         st.sidebar.slider('Std. Deviation (Color)', 0, 100, 75, key=f'C{i}'),
@@ -27,26 +32,55 @@ filter_dict = {
         st.sidebar.slider('# of Clusters', 1, 128, 16, key=f'#{i}')
     ]),
     'Gaussian Blur': (gaussian_blur, lambda i: [
-        (st.sidebar.slider('Kernel Width', 0, 7, 5, key=f'W{i}'),
-         st.sidebar.slider('Kernel Height', 0, 7, 5, key=f'H{i}')),
-        st.sidebar.slider('Standard Deviation', 0, 10, 0, key=f'S{i}')
+        (st.sidebar.slider('Kernel Width', 1, 7, 5, 2, key=f'W{i}'),
+         st.sidebar.slider('Kernel Height', 1, 7, 5, 2, key=f'H{i}')),
+        st.sidebar.slider('Standard Deviation', 0.0, 10.0, 0.0, key=f'S{i}')
+    ]),
+    'Integral': (integral, lambda i: []),
+    'Max Filter': (max_filter, lambda i: [
+        st.sidebar.slider('Diameter', 1, 15, 9, 2, key=f'D{i}')
     ]),
     'Mean Filter': (mean_filter, lambda i: [
-        (st.sidebar.slider('Kernel Width', 0, 7, 5, key=f'W{i}'),
-         st.sidebar.slider('Kernel Height', 0, 7, 5, key=f'H{i}'))
+        (st.sidebar.slider('Kernel Width', 1, 7, 5, key=f'W{i}'),
+         st.sidebar.slider('Kernel Height', 1, 7, 5, key=f'H{i}'))
     ]),
     'Median Filter': (median_filter, lambda i: [
-        (st.sidebar.slider('Kernel Width', 0, 7, 5, key=f'W{i}'),
-         st.sidebar.slider('Kernel Height', 0, 7, 5, key=f'H{i}'))
+        st.sidebar.slider('Diameter', 1, 15, 9, 2, key=f'D{i}')
+    ]),
+    'Min Filter': (min_filter, lambda i: [
+        st.sidebar.slider('Diameter', 1, 15, 9, 2, key=f'D{i}')
+    ]),
+    'Mode Filter': (mode_filter, lambda i: [
+        st.sidebar.slider('Diameter', 1, 15, 9, 2, key=f'D{i}')
+    ]),
+    'Rotate': (rotate, lambda i: [
+        st.sidebar.slider('Angle', 0.0, 360.0, 0.0, key=f'A{i}')
+    ]),
+    'Scale': (scale, lambda i: [
+        (st.sidebar.slider('Scale X', .1, 10.0, 1.0, key=f'X{i}'),
+         st.sidebar.slider('Scale Y', .1, 10.0, 1.0, key=f'Y{i}'))
+    ]),
+    'Shear': (shear, lambda i: [
+        st.sidebar.slider('Angle', 0.0, 90.0, 0.0, key=f'A{i}')
     ]),
     'Spread': (spread, lambda i: [
         st.sidebar.slider('Distance', 0, 15, 3, key=f'D{i}')
     ]),
     'Swirl': (swirl, lambda i: [
-        st.sidebar.slider('Strength', 1, 100, 1, key=f'S{i}'),
-        st.sidebar.slider('Radius', 1, 1000, 100, key=f'R{i}'),
-        st.sidebar.slider('Rotation', 0, 360, 0, key=f'Ro{i}')
+        (st.sidebar.number_input('Center X', key=f'X{i}'),
+         st.sidebar.number_input('Center Y', key=f'Y{i}')),
+        st.sidebar.slider('Strength', 1.0, 100.0, 1.0, key=f'S{i}'),
+        st.sidebar.slider('Radius', 1.0, 1000.0, 100.0, key=f'R{i}')
     ]),
+    'Translate': (translate, lambda i: [
+        (st.sidebar.slider('Offset X', -400, 400, 0, key=f'X{i}'),
+         st.sidebar.slider('Offset Y', -400, 400, 0, key=f'Y{i}'))
+    ]),
+    'Unsharpen': (unsharpen, lambda i: [
+        st.sidebar.slider('Radius', 0, 7, 2, key=f'R{i}'),
+        st.sidebar.slider('Percent', 0, 200, 150, key=f'P{i}'),
+        st.sidebar.slider('Threshold', 0, 10, 3, key=f'T{i}')
+    ])
 }
 
 # PAGE

@@ -22,7 +22,7 @@ def unsharpen(radius: int = 2, percent: int = 150, threshold: int = 3) -> Filter
     return f
 
 
-def min_filter(size) -> Filter:
+def min_filter(size: int) -> Filter:
     kernel = MinFilter(size)
 
     @filter_pil
@@ -32,7 +32,7 @@ def min_filter(size) -> Filter:
     return f
 
 
-def max_filter(size) -> Filter:
+def max_filter(size: int) -> Filter:
     kernel = MaxFilter(size)
 
     @filter_pil
@@ -42,7 +42,7 @@ def max_filter(size) -> Filter:
     return f
 
 
-def mode_filter(size) -> Filter:
+def mode_filter(size: int) -> Filter:
     kernel = ModeFilter(size)
 
     @filter_pil

@@ -111,10 +111,10 @@ def convert_color(o: ColorMode, n: ColorMode) -> Filter:
     return f
 
 
-def swirl(center: Optional[Tuple[float, float]] = None, strength: float = 1, radius: float = 100, rotation: float = 0) -> Filter:
+def swirl(center: Optional[Tuple[float, float]] = None, strength: float = 1, radius: float = 100) -> Filter:
     @filter_numpy
     def f(img: np.ndarray) -> np.ndarray:
-        return img_as_ubyte(sk_swirl(img, center, strength, radius, rotation))
+        return img_as_ubyte(sk_swirl(img, center, strength, radius))
 
     return f
 
