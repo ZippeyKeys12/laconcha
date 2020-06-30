@@ -1,12 +1,15 @@
+from math import radians
 from typing import Tuple, Union
 
-import numpy as np
 from skimage.transform import AffineTransform
 from skimage.transform import rotate as sk_rotate
 from skimage.transform import warp
-from math import radians
+from skimage.util import img_as_ubyte
+
+import numpy as np
+
 from ..image import Filter
-from .decorators import filter_scikit
+from .decorators import filter_numpy, filter_scikit
 
 
 def translate(vector: Tuple[float, float]) -> Filter:
@@ -18,9 +21,9 @@ def scale(multiplier: Union[float, Tuple[float, float]]) -> Filter:
 
 
 def rotate(angle: float) -> Filter:
-    @filter_scikit
+    @filter_numpy
     def f(img: np.ndarray) -> np.ndarray:
-        return sk_rotate(img, angle)
+        return img_as_ubyte(sk_rotate(img, angle))
 
     return f
 
@@ -30,8 +33,11 @@ def shear(angle: float) -> Filter:
 
 
 def transform(t: AffineTransform) -> Filter:
-    @filter_scikit
+    @filter_numpy
     def f(img: np.ndarray) -> np.ndarray:
-        return warp(img, t)
+        return img_as_ubyte(warp(img, t))
 
     return f
+
+# def flip(axis):
+#     def f()
