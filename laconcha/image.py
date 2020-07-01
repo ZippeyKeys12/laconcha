@@ -105,5 +105,6 @@ class Image:
         self.as_pil().save(fp)
 
 
+Generator = Callable[[Tuple[int, int], int], Image]
 Filter = Callable[[Image], Image]
 Operator = Callable[[Image, Image], Image]
