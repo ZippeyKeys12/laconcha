@@ -1,3 +1,4 @@
+from PIL import ImageChops, ImageOps
 from PIL.Image import Image as PILImage
 from PIL.ImageEnhance import Brightness, Color, Contrast, Sharpness
 from PIL.ImageFilter import MaxFilter, MinFilter, ModeFilter, UnsharpMask
@@ -81,5 +82,61 @@ def sharpness(factor: float) -> Filter:
     @filter_pil
     def f(img: PILImage) -> PILImage:
         return Sharpness(img).enhance(factor)
+
+    return f
+
+
+def invert() -> Filter:
+    @filter_pil
+    def f(img: PILImage) -> PILImage:
+        return ImageChops.invert(img)
+
+    return f
+
+
+def autocontrast(cutoff: float = 0) -> Filter:
+    @filter_pil
+    def f(img: PILImage) -> PILImage:
+        return ImageOps.autocontrast(img, cutoff)
+
+    return f
+
+
+def equalize(mask=None) -> Filter:
+    @filter_pil
+    def f(img: PILImage) -> PILImage:
+        return ImageOps.equalize(img, mask)
+
+    return f
+
+
+def vflip() -> Filter:
+    @filter_pil
+    def f(img: PILImage) -> PILImage:
+        return ImageOps.flip(img)
+
+    return f
+
+
+def hflip() -> Filter:
+    @filter_pil
+    def f(img: PILImage) -> PILImage:
+        return ImageOps.mirror(img)
+
+    return f
+
+
+def posterize(bits: int) -> Filter:
+    @filter_pil
+    def f(img: PILImage) -> PILImage:
+        return ImageOps.posterize(img, bits)
+
+    return f
+
+
+def solarize(threshold: int = 128) -> Filter:
+    @filter_pil
+    def f(img: PILImage) -> PILImage:
+        return ImageOps.solarize(img, threshold)
 
     return f
