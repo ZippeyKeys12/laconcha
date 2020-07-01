@@ -5,11 +5,13 @@ import streamlit as st
 
 import SessionState
 from laconcha import Image
-from laconcha.filters import (ColorChannel, bilateral_filter, channel,
-                              color_quantization, gaussian_blur, integral,
+from laconcha.filters import (ColorChannel, ColorMode, bilateral_filter,
+                              brightness, channel, color_quantization,
+                              contrast, convert_color, gaussian_blur, integral,
                               max_filter, mean_filter, median_filter,
-                              min_filter, mode_filter, rotate, scale, shear,
-                              spread, swirl, translate, unsharpen)
+                              min_filter, mode_filter, rotate, saturation,
+                              scale, sharpness, shear, spread, swirl,
+                              translate, unsharpen)
 
 # SETUP
 
@@ -24,12 +26,24 @@ filter_dict = {
         st.sidebar.slider('Std. Deviation (Color)', 0, 100, 75, key=f'C{i}'),
         st.sidebar.slider('Std. Deviation (Space)', 0, 100, 75, key=f'S{i}')
     ]),
+    'Brightness': (brightness, lambda i: [
+        st.sidebar.slider('Factor', 0.0, 2.0, 1.0, key=f'F{i}')
+    ]),
     'Channel': (channel, lambda i: [
         st.sidebar.selectbox('Channel', list(ColorChannel),
                              format_func=lambda x: x.name, key=f'C{i}')
     ]),
     'Color Quantization': (color_quantization, lambda i: [
         st.sidebar.slider('# of Clusters', 1, 128, 16, key=f'#{i}')
+    ]),
+    'Contrast': (contrast, lambda i: [
+        st.sidebar.slider('Factor', 0.0, 2.0, 1.0, key=f'F{i}')
+    ]),
+    'Convert Color Mode': (convert_color, lambda i: [
+        st.sidebar.selectbox('From', list(ColorMode),
+                             format_func=lambda x: x.name, key=f'F{i}'),
+        st.sidebar.selectbox('To', list(ColorMode),
+                             format_func=lambda x: x.name, key=f'T{i}')
     ]),
     'Gaussian Blur': (gaussian_blur, lambda i: [
         (st.sidebar.slider('Kernel Width', 1, 7, 5, 2, key=f'W{i}'),
@@ -56,9 +70,15 @@ filter_dict = {
     'Rotate': (rotate, lambda i: [
         st.sidebar.slider('Angle', 0.0, 360.0, 0.0, key=f'A{i}')
     ]),
+    'Saturation': (saturation, lambda i: [
+        st.sidebar.slider('Factor', 0.0, 2.0, 1.0, key=f'F{i}')
+    ]),
     'Scale': (scale, lambda i: [
         (st.sidebar.slider('Scale X', .1, 10.0, 1.0, key=f'X{i}'),
          st.sidebar.slider('Scale Y', .1, 10.0, 1.0, key=f'Y{i}'))
+    ]),
+    'Sharpness': (sharpness, lambda i: [
+        st.sidebar.slider('Factor', 0.0, 2.0, 1.0, key=f'F{i}')
     ]),
     'Shear': (shear, lambda i: [
         st.sidebar.slider('Angle', 0.0, 90.0, 0.0, key=f'A{i}')
