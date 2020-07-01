@@ -9,7 +9,7 @@ from skimage.util import img_as_ubyte
 import numpy as np
 
 from ..image import Filter
-from .decorators import filter_numpy, filter_scikit
+from .decorators import filter_numpy
 
 
 def translate(vector: Tuple[float, float]) -> Filter:

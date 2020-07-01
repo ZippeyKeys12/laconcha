@@ -10,6 +10,7 @@ from sklearn.cluster import MiniBatchKMeans
 import numpy as np
 
 from ..image import Filter
+from .base import identity
 from .decorators import filter_numpy
 
 
@@ -94,6 +95,9 @@ _color_convs = {
 
 
 def convert_color(o: ColorMode, n: ColorMode) -> Filter:
+    if o == n:
+        return identity
+
     conv = _color_convs[o][n]
 
     if isinstance(conv, (list, tuple)):
