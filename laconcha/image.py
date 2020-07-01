@@ -90,14 +90,13 @@ class Image:
         return self.img
 
     def apply_filter(self, f: Filter):
-        res = f(self)
-        self.mode = res.mode
-        self.img = res.img
-        self.size = res.size
+        return f(self)
 
     def apply_filters(self, fs: Iterable[Filter]):
+        i = self
         for f in fs:
-            self.apply_filter(f)
+            i = i.apply_filter(f)
+        return i
 
     def show(self, title: Optional[str] = None):
         self.as_pil().show(title)
