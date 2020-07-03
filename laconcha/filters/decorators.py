@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Callable
 
-import numpy as np
 from PIL.Image import Image as PILImage
-from skimage.util import img_as_ubyte
+
+import numpy as np
 
 from ..image import Filter, Image, ImageMode
 
@@ -43,20 +43,17 @@ NumPyFilter = Callable[[np.ndarray], np.ndarray]
 
 def filter_numpy(f: NumPyFilter) -> Filter:
     def new_f(img: Image) -> Image:
-        mode = img.mode
-
-        if mode == ImageMode.PIL:
+        if img.mode == ImageMode.PIL:
             i = img.as_opencv()
-            mode = ImageMode.OPENCV
         else:
             i = img.img
 
         res = f(i)
 
-        if mode == ImageMode.OPENCV:
+        if img.mode == ImageMode.OPENCV:
             return Image.from_opencv(res)
 
-        if mode == ImageMode.SCIKIT:
+        if img.mode == ImageMode.SCIKIT:
             return Image.from_scikit(res)
 
         raise RuntimeError('what')
