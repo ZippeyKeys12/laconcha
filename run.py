@@ -13,10 +13,23 @@ from laconcha.filters import (ColorChannel, ColorMode, autocontrast,
                               min_filter, mode_filter, posterize, rotate,
                               saturation, scale, sharpness, shear, solarize,
                               spread, swirl, translate, unsharpen, vflip)
+from laconcha.generators import gaussian_noise, white_noise
 
 # SETUP
 
+img_path = 'test_images/stained-glass-1181864_1920.jpg'
+
 session_state: Any = SessionState.get(filters=[])
+
+generator_dict = {
+    'File': (lambda size: crop(size)(Image.open(st.file_uploader('Choose an Image', ['.png', '.jpg']) or img_path)), lambda: []),
+    'Gaussian Noise': (gaussian_noise, lambda: [
+        st.number_input('Seed', 0, 100, 0)
+    ]),
+    'White Noise': (white_noise, lambda: [
+        st.number_input('Seed', 0, 100, 0)
+    ])
+}
 
 filter_dict = {
     'As OpenCV': (lambda: lambda i: Image.from_opencv(i.as_opencv()), lambda i: []),
@@ -128,8 +141,10 @@ if st.button('Remove Filter') and num_filters > 0:
     session_state.filters.pop()
 
 
-file = st.file_uploader('Choose an Image', ['.png', '.jpg'])
-img = Image.open(file or 'test_images/netherlands-5039354_1280.jpg')
+h = st.slider('Height', 0, 2000, 1000, 2)
+w = st.slider('Width', 0, 2000, 1000, 2)
+g, g_args = generator_dict[st.selectbox('Image', list(generator_dict.keys()))]
+img = g((h, w), *g_args())  # type: ignore
 
 st.image(img.as_pil(), use_column_width=True)
 
