@@ -4,10 +4,12 @@ from typing import Optional, Tuple
 import cv2
 from skimage.transform import integral_image
 from skimage.transform import swirl as sk_swirl
+from skimage.util import img_as_float
 from sklearn.cluster import MiniBatchKMeans
 
 import numpy as np
 
+from ..curves import Curve
 from ..image import Filter
 from .base import identity
 from .decorators import filter_numpy
@@ -126,5 +128,13 @@ def integral() -> Filter:
     @filter_numpy
     def f(img: np.ndarray) -> np.ndarray:
         return integral_image(img)
+
+    return f
+
+
+def curve(c: Curve) -> Filter:
+    @filter_numpy
+    def f(img: np.ndarray) -> np.ndarray:
+        return np.reshape([c(x) for x in img_as_float(img.flatten())], img.shape)
 
     return f
