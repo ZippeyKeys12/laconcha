@@ -8,6 +8,7 @@ import numpy as np
 from PIL.Image import Image as PILImage
 from PIL.Image import fromarray as pil_fromarray
 from PIL.Image import open as pil_open
+from skimage.util import img_as_ubyte
 
 RawImage = Union[np.ndarray, PILImage]
 
@@ -38,7 +39,7 @@ class Image:
     def from_opencv(img: np.ndarray) -> Image:
         res = Image(img.shape[:2], init=False)
         res.mode = ImageMode.OPENCV
-        res.img = img
+        res.img = img_as_ubyte(img)
         return res
 
     @staticmethod
@@ -52,7 +53,7 @@ class Image:
     def from_scikit(img: np.ndarray) -> Image:
         res = Image(img.shape[:2], init=False)
         res.mode = ImageMode.SCIKIT
-        res.img = img
+        res.img = img_as_ubyte(img)
         return res
 
     def as_opencv(self) -> np.ndarray:

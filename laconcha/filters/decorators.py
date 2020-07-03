@@ -33,7 +33,7 @@ ScikitFilter = Callable[[np.ndarray], np.ndarray]
 
 def filter_scikit(f: ScikitFilter) -> Filter:
     def new_f(img: Image) -> Image:
-        return Image.from_scikit(img_as_ubyte(f(img.as_scikit())))
+        return Image.from_scikit(f(img.as_scikit()))
 
     return new_f
 
