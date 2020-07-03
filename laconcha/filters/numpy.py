@@ -4,7 +4,6 @@ from typing import Optional, Tuple
 import cv2
 from skimage.transform import integral_image
 from skimage.transform import swirl as sk_swirl
-from skimage.util import img_as_ubyte
 from sklearn.cluster import MiniBatchKMeans
 
 import numpy as np
@@ -96,7 +95,7 @@ _color_convs = {
 
 def convert_color(o: ColorMode, n: ColorMode) -> Filter:
     if o == n:
-        return identity
+        return identity()
 
     conv = _color_convs[o][n]
 
@@ -118,7 +117,7 @@ def convert_color(o: ColorMode, n: ColorMode) -> Filter:
 def swirl(center: Optional[Tuple[float, float]] = None, strength: float = 1, radius: float = 100) -> Filter:
     @filter_numpy
     def f(img: np.ndarray) -> np.ndarray:
-        return img_as_ubyte(sk_swirl(img, center, strength, radius))
+        return sk_swirl(img, center, strength, radius)
 
     return f
 
@@ -126,6 +125,6 @@ def swirl(center: Optional[Tuple[float, float]] = None, strength: float = 1, rad
 def integral() -> Filter:
     @filter_numpy
     def f(img: np.ndarray) -> np.ndarray:
-        return img_as_ubyte(integral_image(img))
+        return integral_image(img)
 
     return f

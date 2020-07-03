@@ -24,8 +24,3 @@ def channel(ch: ColorChannel) -> Filter:
         return res
 
     return f
-
-
-
-
-

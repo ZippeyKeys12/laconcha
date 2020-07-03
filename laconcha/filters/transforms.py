@@ -4,7 +4,6 @@ from typing import Tuple, Union
 from skimage.transform import AffineTransform
 from skimage.transform import rotate as sk_rotate
 from skimage.transform import warp
-from skimage.util import img_as_ubyte
 
 import numpy as np
 
@@ -23,7 +22,7 @@ def scale(multiplier: Union[float, Tuple[float, float]]) -> Filter:
 def rotate(angle: float) -> Filter:
     @filter_numpy
     def f(img: np.ndarray) -> np.ndarray:
-        return img_as_ubyte(sk_rotate(img, angle))
+        return sk_rotate(img, angle)
 
     return f
 
@@ -35,7 +34,7 @@ def shear(angle: float) -> Filter:
 def transform(t: AffineTransform) -> Filter:
     @filter_numpy
     def f(img: np.ndarray) -> np.ndarray:
-        return img_as_ubyte(warp(img, t))
+        return warp(img, t)
 
     return f
 
