@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 from PIL.Image import Image as PILImage
 from PIL.Image import fromarray as pil_fromarray
-from PIL.Image import open as pil_open
+from skimage import io
 from skimage.util import img_as_ubyte
 
 RawImage = Union[np.ndarray, PILImage]
@@ -30,10 +30,8 @@ class Image:
             self.img: RawImage = np.zeros((*size, 3), dtype=np.uint8)
 
     @staticmethod
-    def open(fp):
-        img = pil_open(fp)
-        img.load()
-        return Image.from_pil(img)
+    def open(fp) -> Image:
+        return Image.from_scikit(io.imread(fp))
 
     @staticmethod
     def from_opencv(img: np.ndarray) -> Image:
@@ -106,6 +104,12 @@ class Image:
         self.as_pil().save(fp)
 
 
-Generator = Callable[[Tuple[int, int], int], Image]
+Generator = Callable[[Tuple[int, int]], Image]
 Filter = Callable[[Image], Image]
 Operator = Callable[[Image, Image], Image]
+
+
+class ColorChannel(IntEnum):
+    B = 0
+    G = 1
+    R = 2

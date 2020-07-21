@@ -2,16 +2,22 @@ from typing import Tuple
 
 import numpy as np
 
-from ...image import Image
+from ...image import Generator, Image
 
 
-def white_noise(size: Tuple[int, int], seed: int) -> Image:
-    gen = np.random.default_rng(seed)
+def white_noise(seed: int) -> Generator:
+    def f(size: Tuple[int, int]) -> Image:
+        gen = np.random.default_rng(seed)
 
-    return Image.from_opencv((gen.random((*size, 3)) * 255).astype(np.uint8))
+        return Image.from_opencv((gen.random((*size, 3)) * 255).astype(np.uint8))
+
+    return f
 
 
-def gaussian_noise(size: Tuple[int, int], seed: int) -> Image:
-    gen = np.random.default_rng(seed)
+def gaussian_noise(seed: int) -> Generator:
+    def f(size: Tuple[int, int]) -> Image:
+        gen = np.random.default_rng(seed)
 
-    return Image.from_opencv((np.clip(gen.normal(size=(*size, 3)) / 4 + .5, 0, 1) * 255).astype(np.uint8))
+        return Image.from_opencv((np.clip(gen.normal(size=(*size, 3)) / 4 + .5, 0, 1) * 255).astype(np.uint8))
+
+    return f

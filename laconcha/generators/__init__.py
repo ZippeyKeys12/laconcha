@@ -3,3 +3,4 @@
 
 from .function import from_function, from_rgb_functions
 from .noise import gaussian_noise, white_noise
+from .pil import maurer_rose

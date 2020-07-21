@@ -52,6 +52,6 @@ def lighter() -> Operator:
 def blend(alpha: float) -> Operator:
     @operator_pil
     def f(a: PILImage, b: PILImage) -> PILImage:
-        return operator_pil(ImageChops.blend(a, b, alpha))
+        return ImageChops.blend(a, b, alpha)
 
     return f
