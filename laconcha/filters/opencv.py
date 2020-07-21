@@ -1,18 +1,10 @@
-
-from enum import IntEnum
-
 import numpy as np
 
+from ..image import ColorChannel
 from .decorators import Filter, filter_opencv
 
 
-class ColorChannel(IntEnum):
-    B = 0
-    G = 1
-    R = 2
-
-
-def channel(ch: ColorChannel) -> Filter:
+def get_channel(ch: ColorChannel) -> Filter:
     index = ch.value
 
     @filter_opencv

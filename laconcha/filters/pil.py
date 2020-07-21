@@ -86,12 +86,9 @@ def sharpness(factor: float) -> Filter:
     return f
 
 
-def invert() -> Filter:
-    @filter_pil
-    def f(img: PILImage) -> PILImage:
-        return ImageChops.invert(img)
-
-    return f
+@filter_pil
+def invert(img: PILImage) -> PILImage:
+    return ImageChops.invert(img)
 
 
 def autocontrast(cutoff: float = 0) -> Filter:
@@ -110,20 +107,14 @@ def equalize(mask=None) -> Filter:
     return f
 
 
-def vflip() -> Filter:
-    @filter_pil
-    def f(img: PILImage) -> PILImage:
-        return ImageOps.flip(img)
-
-    return f
+@filter_pil
+def vflip(img: PILImage) -> PILImage:
+    return ImageOps.flip(img)
 
 
-def hflip() -> Filter:
-    @filter_pil
-    def f(img: PILImage) -> PILImage:
-        return ImageOps.mirror(img)
-
-    return f
+@filter_pil
+def hflip(img: PILImage) -> PILImage:
+    return ImageOps.mirror(img)
 
 
 def posterize(bits: int) -> Filter:

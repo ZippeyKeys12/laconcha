@@ -1,4 +1,3 @@
-from enum import IntEnum, auto
 from typing import Optional, Tuple
 
 import cv2
@@ -11,7 +10,6 @@ import numpy as np
 
 from ..curves import Curve
 from ..image import Filter
-from .base import identity
 from .decorators import filter_numpy
 
 
@@ -64,58 +62,6 @@ def color_quantization(n_clusters: int) -> Filter:
     return f
 
 
-class ColorMode(IntEnum):
-    RGB = auto()
-    BGR = auto()
-    HSV = auto()
-    LAB = auto()
-
-
-_color_convs = {
-    ColorMode.RGB: {
-        ColorMode.BGR: cv2.COLOR_RGB2BGR,
-        ColorMode.HSV: cv2.COLOR_RGB2HSV,
-        ColorMode.LAB: cv2.COLOR_RGB2LAB
-    },
-    ColorMode.BGR: {
-        ColorMode.RGB: cv2.COLOR_BGR2RGB,
-        ColorMode.HSV: cv2.COLOR_BGR2HSV,
-        ColorMode.LAB: cv2.COLOR_BGR2LAB
-    },
-    ColorMode.HSV: {
-        ColorMode.RGB: cv2.COLOR_HSV2RGB,
-        ColorMode.BGR: cv2.COLOR_HSV2BGR,
-        ColorMode.LAB: [cv2.COLOR_HSV2BGR, cv2.COLOR_BGR2LAB]
-    },
-    ColorMode.LAB: {
-        ColorMode.RGB: cv2.COLOR_LAB2RGB,
-        ColorMode.BGR: cv2.COLOR_LAB2BGR,
-        ColorMode.HSV: [cv2.COLOR_LAB2BGR, cv2.COLOR_BGR2HSV]
-    }
-}
-
-
-def convert_color(o: ColorMode, n: ColorMode) -> Filter:
-    if o == n:
-        return identity()
-
-    conv = _color_convs[o][n]
-
-    if isinstance(conv, (list, tuple)):
-        @filter_numpy
-        def f(img: np.ndarray) -> np.ndarray:
-            for c in conv:
-                img = cv2.cvtColor(img, c)
-            return img
-
-    else:
-        @filter_numpy
-        def f(img: np.ndarray) -> np.ndarray:
-            return cv2.cvtColor(img, conv)
-
-    return f
-
-
 def swirl(center: Optional[Tuple[float, float]] = None, strength: float = 1, radius: float = 100) -> Filter:
     @filter_numpy
     def f(img: np.ndarray) -> np.ndarray:
@@ -124,17 +70,27 @@ def swirl(center: Optional[Tuple[float, float]] = None, strength: float = 1, rad
     return f
 
 
-def integral() -> Filter:
-    @filter_numpy
-    def f(img: np.ndarray) -> np.ndarray:
-        return integral_image(img)
-
-    return f
+@filter_numpy
+def integral(img: np.ndarray) -> np.ndarray:
+    return integral_image(img)
 
 
 def curve(c: Curve) -> Filter:
     @filter_numpy
     def f(img: np.ndarray) -> np.ndarray:
         return np.reshape([c(x) for x in img_as_float(img.flatten())], img.shape)
+
+    return f
+
+
+def shuffle(seed: int) -> Filter:
+    @filter_numpy
+    def f(img: np.ndarray) -> np.ndarray:
+        h, w, _ = img.shape
+        gen = np.random.default_rng(seed)
+
+        img = img.copy().reshape(h * w, 3)
+        gen.shuffle(img)
+        return img.reshape(h, w, 3)
 
     return f
