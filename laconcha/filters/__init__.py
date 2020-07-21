@@ -13,4 +13,5 @@ from .pil import (autocontrast, brightness, contrast, equalize, hflip, invert,
                   max_filter, min_filter, mode_filter, posterize, saturation,
                   sharpness, solarize, spread, unsharpen, vflip)
 from .scikit import ColorMode, convert_color
+from .tiling import mirror_tile, tile
 from .transforms import rotate, scale, shear, transform, translate
