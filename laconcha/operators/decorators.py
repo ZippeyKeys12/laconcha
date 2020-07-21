@@ -1,6 +1,6 @@
 from __future__ import annotations
-from typing import Tuple
 
+from functools import wraps
 from typing import Callable
 
 import numpy as np
@@ -12,6 +12,7 @@ OpenCVOperator = Callable[[np.ndarray, np.ndarray], np.ndarray]
 
 
 def operator_opencv(f: OpenCVOperator) -> Operator:
+    @wraps(f)
     def new_f(a: Image, b: Image):
         return Image.from_opencv(f(a.as_opencv(), b.as_opencv()))
 
@@ -22,6 +23,7 @@ PILOperator = Callable[[PILImage, PILImage], PILImage]
 
 
 def operator_pil(f: PILOperator) -> Operator:
+    @wraps(f)
     def new_f(a: Image, b: Image):
         return Image.from_pil(f(a.as_pil(), b.as_pil()))
 
@@ -32,6 +34,7 @@ ScikitOperator = Callable[[np.ndarray, np.ndarray], np.ndarray]
 
 
 def operator_scikit(f: ScikitOperator) -> Operator:
+    @wraps(f)
     def new_f(a: Image, b: Image):
         return Image.from_scikit(f(a.as_scikit(), b.as_scikit()))
 
@@ -67,6 +70,7 @@ def _numpyify(a: Image, b: Image):
 
 
 def operator_numpy(f: NumPyOperator) -> Operator:
+    @wraps(f)
     def new_f(a: Image, b: Image) -> Image:
         _numpyify(a, b)
 
