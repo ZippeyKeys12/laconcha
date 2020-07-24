@@ -14,8 +14,8 @@ from ..util import RGBColor
     Range(1, 11, default=2),
     Range(1, 101, default=39),
     Range(1, 1001, default=300),
-    (Range(0, 256), Range(0, 256), Range(0, 256)),
-    (Range(0, 256), Range(0, 256), Range(0, 256))
+    RGBColor,
+    RGBColor
 )
 def maurer_rose(n: int, d: int, radius: int, color1: RGBColor, color2: RGBColor) -> Generator:
     def f(size: Tuple[int, int]) -> Image:

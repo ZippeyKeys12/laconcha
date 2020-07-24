@@ -7,7 +7,7 @@ from ...image import Generator, Image
 from ...seed import Seed
 
 
-@gen_meta(Seed())
+@gen_meta(Seed)
 def white_noise(seed: int) -> Generator:
     def f(size: Tuple[int, int]) -> Image:
         gen = np.random.default_rng(seed)
@@ -17,7 +17,7 @@ def white_noise(seed: int) -> Generator:
     return f
 
 
-@gen_meta(Seed())
+@gen_meta(Seed)
 def gaussian_noise(seed: int) -> Generator:
     def f(size: Tuple[int, int]) -> Image:
         gen = np.random.default_rng(seed)

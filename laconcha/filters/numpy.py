@@ -110,7 +110,7 @@ def curve(c: Curve) -> Filter:
     return f
 
 
-@gen_meta(Seed())
+@gen_meta(Seed)
 def shuffle(seed: int) -> Filter:
     @filter_numpy
     def f(img: np.ndarray) -> np.ndarray:

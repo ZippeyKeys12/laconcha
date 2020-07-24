@@ -9,7 +9,7 @@ import streamlit as st
 
 from .ranges import Range
 from .seed import Seed
-from .util import format_name
+from .util import RGBColor, format_name
 
 T = TypeVar('T')
 
@@ -27,8 +27,15 @@ def _generate_args(o):
     if isinstance(o, Range):
         return o.random()
 
-    if isinstance(o, Seed):
+    if o is Seed or isinstance(o, Seed):
         return random.randint(0, int(16 * '1', base=2))
+
+    if o is RGBColor:
+        return (
+            random.randint(0, 255),
+            random.randint(0, 255),
+            random.randint(0, 255)
+        )
 
     if o is None:
         return None
@@ -52,8 +59,15 @@ def _streamlit_args(label: str, o, i: int):
     if isinstance(o, Range):
         return st.slider(label, o.start, o.stop - 1, o.default, o.step, key=key)
 
-    if isinstance(o, Seed):
+    if o is Seed or isinstance(o, Seed):
         return st.number_input(label, 0, int(16 * '1', base=2), key=key)
+
+    if o is RGBColor:
+        return (
+            st.slider(f'{label}[R]', 0, 255, key=f'{key}R'),
+            st.slider(f'{label}[G]', 0, 255, key=f'{key}G'),
+            st.slider(f'{label}[B]', 0, 255, key=f'{key}B')
+        )
 
     if o is None:
         return None
