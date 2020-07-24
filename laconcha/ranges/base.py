@@ -7,17 +7,20 @@ T = TypeVar('T', int, float)
 class Range(Generic[T]):
     __slots__ = 'start', 'stop', 'step', 'default', 'type'
 
-    def __init__(self, start: T, stop: T, step: Optional[T] = None, default: Optional[T] = None):
+    def __init__(self, start: T, stop: T, step: Optional[T] = None, default: Optional[T] = None, type: Optional[Type[T]] = None):
         self.start: Any = start
         self.stop: Any = stop
         self.step: Optional[T] = step
         self.default: Optional[T] = default
 
-        self.type: Type[T]
-        if isinstance(start, int) and isinstance(stop, int):
-            self.type = int
+        if type is not None:
+            self.type: Type[T] = type
+
         else:
-            self.type = float
+            if all(filter(lambda x: isinstance(x, int), [start, stop, step, default])):
+                self.type = int
+            else:
+                self.type = float  # type: ignore
 
     def random(self, seed: Optional[Hashable] = None) -> T:
         if seed:
