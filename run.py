@@ -1,6 +1,6 @@
 # pylint: disable-all
 
-from typing import Any
+from typing import Any, Callable
 
 import streamlit as st
 
@@ -20,11 +20,19 @@ from laconcha.filters import (ColorChannel, ColorMode, autocontrast,
                               saturation, scale, sharpness, shear, shuffle,
                               solarize, spread, swirl, swirl_flower, tile, top,
                               translate, unsharpen, vflip, vmirror)
-from laconcha.generators import gaussian_noise, maurer_rose, white_noise
+from laconcha.generators import (from_function, from_rgb_functions,
+                                 gaussian_noise, maurer_rose, solid_color,
+                                 white_noise)
 from laconcha.operators import (add, add_modulo, darker, difference,
                                 hard_light, lighter, overlay, screen,
                                 soft_light, subtract, subtract_modulo)
 from laconcha.util import format_name
+
+
+def get_func(label: str, value: str = '') -> Callable:
+    f = st.text_input(label, value)
+    return lambda x, y: eval(f)
+
 
 # SETUP
 
@@ -34,6 +42,9 @@ session_state: Any = SessionState.get(filters=[])
 
 generator_dict = {
     'File': (lambda: lambda size: crop(size)(Image.open(st.file_uploader('Choose an Image', ['png', 'jpg', 'jpeg']) or img_path)), lambda: []),
+    'From Function': (from_function, lambda: [
+        get_func('f(x, y)', '0')
+    ]),
     'Maurer Rose': (maurer_rose, lambda: [
         st.slider('N', 1, 10, 2),
         st.slider('D', 1, 100, 39),
