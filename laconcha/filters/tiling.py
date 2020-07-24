@@ -1,9 +1,11 @@
 from typing import Tuple
-
+from ..ranges import Range
+from ..decorators import gen_meta
 from ..image import Filter, Image
 from .kaleidoscope import hattach, hflip, vattach, vflip
 
 
+@gen_meta((Range(1, 11), Range(1, 11)))
 def tile(size: Tuple[int, int]) -> Filter:
     def f(img: Image) -> Image:
         height, width = size
@@ -19,6 +21,7 @@ def tile(size: Tuple[int, int]) -> Filter:
     return f
 
 
+@gen_meta((Range(1, 11), Range(1, 11)))
 def mirror_tile(size: Tuple[int, int]) -> Filter:
     def f(img: Image) -> Image:
         height, width = size

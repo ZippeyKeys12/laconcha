@@ -4,6 +4,7 @@ import cv2
 
 import numpy as np
 
+from ..decorators import gen_meta
 from ..image import Filter
 from .base import identity
 from .decorators import filter_scikit
@@ -40,9 +41,10 @@ _color_convs = {
 }
 
 
+@gen_meta(ColorMode, ColorMode)
 def convert_color(o: ColorMode, n: ColorMode) -> Filter:
     if o == n:
-        return identity()
+        return identity
 
     conv = _color_convs[o][n]
 

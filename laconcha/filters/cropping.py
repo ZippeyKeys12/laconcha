@@ -5,10 +5,13 @@ from PIL import ImageOps
 
 import numpy as np
 
+from ..decorators import gen_meta
 from ..image import Filter
+from ..ranges import Range
 from .decorators import filter_numpy, filter_pil
 
 
+@gen_meta(Range(0, 1024, 2), Range(0, 1024, 2))
 def crop(size: Tuple[int, int]) -> Filter:
     @filter_numpy
     def f(img: np.ndarray) -> np.ndarray:
@@ -20,6 +23,7 @@ def crop(size: Tuple[int, int]) -> Filter:
     return f
 
 
+@gen_meta(Range(0, 1024, 2), Range(0, 1024, 2))
 def fit(size: Tuple[int, int]) -> Filter:
     size = size[::-1]
 
@@ -30,6 +34,7 @@ def fit(size: Tuple[int, int]) -> Filter:
     return f
 
 
+@gen_meta(Range(0, 1024, 2))
 def top(pixels: int) -> Filter:
     @filter_numpy
     def f(img: np.ndarray) -> np.ndarray:
@@ -38,6 +43,7 @@ def top(pixels: int) -> Filter:
     return f
 
 
+@gen_meta(Range(0, 1024, 2))
 def bottom(pixels: int) -> Filter:
     @filter_numpy
     def f(img: np.ndarray) -> np.ndarray:
@@ -46,6 +52,7 @@ def bottom(pixels: int) -> Filter:
     return f
 
 
+@gen_meta(Range(0, 1024, 2))
 def left(pixels: int) -> Filter:
     @filter_numpy
     def f(img: np.ndarray) -> np.ndarray:
@@ -54,6 +61,7 @@ def left(pixels: int) -> Filter:
     return f
 
 
+@gen_meta(Range(0, 1024, 2))
 def right(pixels: int) -> Filter:
     @filter_numpy
     def f(img: np.ndarray) -> np.ndarray:

@@ -4,8 +4,11 @@ from PIL.ImageEnhance import Brightness, Color, Contrast, Sharpness
 from PIL.ImageFilter import MaxFilter, MinFilter, ModeFilter, UnsharpMask
 
 from .decorators import Filter, filter_pil
+from ..decorators import gen_meta
+from ..ranges import Range
 
 
+@gen_meta(Range(0, 16, default=3))
 def spread(distance: float) -> Filter:
     @filter_pil
     def f(img: PILImage) -> PILImage:
@@ -14,6 +17,7 @@ def spread(distance: float) -> Filter:
     return f
 
 
+@gen_meta(Range(0, 8, default=2), Range(0, 201, default=150), Range(0, 11, default=3))
 def unsharpen(radius: int = 2, percent: int = 150, threshold: int = 3) -> Filter:
     kernel = UnsharpMask(radius, percent, threshold)
 
@@ -24,6 +28,7 @@ def unsharpen(radius: int = 2, percent: int = 150, threshold: int = 3) -> Filter
     return f
 
 
+@gen_meta(Range(1, 16, 2, 9))
 def min_filter(size: int) -> Filter:
     kernel = MinFilter(size)
 
@@ -34,6 +39,7 @@ def min_filter(size: int) -> Filter:
     return f
 
 
+@gen_meta(Range(1, 16, 2, 9))
 def max_filter(size: int) -> Filter:
     kernel = MaxFilter(size)
 
@@ -44,6 +50,7 @@ def max_filter(size: int) -> Filter:
     return f
 
 
+@gen_meta(Range(1, 16, 2, 9))
 def mode_filter(size: int) -> Filter:
     kernel = ModeFilter(size)
 
@@ -54,6 +61,7 @@ def mode_filter(size: int) -> Filter:
     return f
 
 
+@gen_meta(Range(0.0, 2, default=1))
 def brightness(factor: float) -> Filter:
     @filter_pil
     def f(img: PILImage) -> PILImage:
@@ -62,6 +70,7 @@ def brightness(factor: float) -> Filter:
     return f
 
 
+@gen_meta(Range(0.0, 2, default=1))
 def contrast(factor: float) -> Filter:
     @filter_pil
     def f(img: PILImage) -> PILImage:
@@ -70,6 +79,7 @@ def contrast(factor: float) -> Filter:
     return f
 
 
+@gen_meta(Range(0.0, 2, default=1))
 def saturation(factor: float) -> Filter:
     @filter_pil
     def f(img: PILImage) -> PILImage:
@@ -78,6 +88,7 @@ def saturation(factor: float) -> Filter:
     return f
 
 
+@gen_meta(Range(0.0, 2, default=1))
 def sharpness(factor: float) -> Filter:
     @filter_pil
     def f(img: PILImage) -> PILImage:
@@ -86,11 +97,13 @@ def sharpness(factor: float) -> Filter:
     return f
 
 
+@gen_meta()
 @filter_pil
 def invert(img: PILImage) -> PILImage:
     return ImageChops.invert(img)
 
 
+@gen_meta(Range(0, 50))
 def autocontrast(cutoff: float = 0) -> Filter:
     @filter_pil
     def f(img: PILImage) -> PILImage:
@@ -99,6 +112,7 @@ def autocontrast(cutoff: float = 0) -> Filter:
     return f
 
 
+@gen_meta()
 def equalize(mask=None) -> Filter:
     @filter_pil
     def f(img: PILImage) -> PILImage:
@@ -107,16 +121,19 @@ def equalize(mask=None) -> Filter:
     return f
 
 
+@gen_meta()
 @filter_pil
 def vflip(img: PILImage) -> PILImage:
     return ImageOps.flip(img)
 
 
+@gen_meta()
 @filter_pil
 def hflip(img: PILImage) -> PILImage:
     return ImageOps.mirror(img)
 
 
+@gen_meta(Range(1, 9, default=8))
 def posterize(bits: int) -> Filter:
     @filter_pil
     def f(img: PILImage) -> PILImage:
@@ -125,6 +142,7 @@ def posterize(bits: int) -> Filter:
     return f
 
 
+@gen_meta(Range(0, 256, default=128))
 def solarize(threshold: int = 128) -> Filter:
     @filter_pil
     def f(img: PILImage) -> PILImage:

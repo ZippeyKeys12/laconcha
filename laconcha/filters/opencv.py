@@ -2,8 +2,10 @@ import numpy as np
 
 from ..image import ColorChannel
 from .decorators import Filter, filter_opencv
+from ..decorators import gen_meta
 
 
+@gen_meta(ColorChannel)
 def get_channel(ch: ColorChannel) -> Filter:
     index = ch.value
 
