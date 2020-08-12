@@ -12,6 +12,7 @@ from .opencv import ColorChannel, get_channel
 from .pil import (autocontrast, brightness, contrast, equalize, hflip, invert,
                   max_filter, min_filter, mode_filter, posterize, saturation,
                   sharpness, solarize, spread, unsharpen, vflip)
+from .saliency import fine_grained_saliency, spectral_residual_saliency
 from .scikit import ColorMode, convert_color
 from .tiling import mirror_tile, tile
 from .transforms import rotate, scale, shear, transform, translate

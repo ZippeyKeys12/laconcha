@@ -13,7 +13,6 @@ pytest = "*"
 
 [packages]
 pillow = "*"
-opencv-python = "*"
 numpy = "*"
 scipy = "*"
 scikit-learn = "*"
@@ -25,6 +24,7 @@ streamlit = "*"
 pytest-benchmark = "*"
 cytoolz = "*"
 tensorflow = "*"
+opencv-contrib-python = "*"
 
 [requires]
 python_version = "3.7"
