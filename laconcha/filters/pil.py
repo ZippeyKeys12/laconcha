@@ -3,9 +3,10 @@ from PIL.Image import Image as PILImage
 from PIL.ImageEnhance import Brightness, Color, Contrast, Sharpness
 from PIL.ImageFilter import MaxFilter, MinFilter, ModeFilter, UnsharpMask
 
-from .decorators import Filter, filter_pil
 from ..decorators import gen_meta
+from ..image import Image
 from ..ranges import Range
+from .decorators import Filter, filter_pil
 
 
 @gen_meta(Range(0, 16, default=3))
@@ -113,7 +114,10 @@ def autocontrast(cutoff: float = 0) -> Filter:
 
 
 @gen_meta()
-def equalize(mask=None) -> Filter:
+def equalize(mask: Image = None) -> Filter:
+    if mask is not None:
+        mask = mask.as_pil()
+
     @filter_pil
     def f(img: PILImage) -> PILImage:
         return ImageOps.equalize(img, mask)

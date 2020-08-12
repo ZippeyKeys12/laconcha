@@ -73,7 +73,7 @@ def color_quantization(n_clusters: int) -> Filter:
     return f
 
 
-@gen_meta(Range(0.0, 100), Range(1.0, 1024))
+@gen_meta(Range(-100.0, 100), Range(1.0, 1024))
 def swirl(strength: float, radius: float) -> Filter:
     @filter_numpy
     def f(img: np.ndarray) -> np.ndarray:
@@ -120,5 +120,24 @@ def shuffle(seed: int) -> Filter:
         img = img.copy().reshape(h * w, 3)
         gen.shuffle(img)
         return img.reshape(h, w, 3)
+
+    return f
+
+
+@gen_meta(Range(0, 256))
+def threshold(cutoff: int) -> Filter:
+    @filter_numpy
+    def f(img: np.ndarray) -> np.ndarray:
+        res = np.empty_like(img)
+
+        res[img < cutoff] = 0
+        res[img > cutoff] = 255
+
+        if cutoff > 127:
+            res[img == cutoff] = 255
+        else:
+            res[img == cutoff] = 0
+
+        return res
 
     return f
