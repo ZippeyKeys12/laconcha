@@ -1,22 +1,19 @@
 from typing import Tuple
-from ..ranges import Range
+
+import numpy as np
+
 from ..decorators import gen_meta
 from ..image import Filter, Image
+from ..ranges import Range
+from .decorators import filter_numpy
 from .kaleidoscope import hattach, hflip, vattach, vflip
 
 
 @gen_meta((Range(1, 11), Range(1, 11)))
-def tile(size: Tuple[int, int]) -> Filter:
-    def f(img: Image) -> Image:
-        height, width = size
-
-        for _ in range(1, height):
-            img = vattach(img, img)
-
-        for _ in range(1, width):
-            img = hattach(img, img)
-
-        return img
+def tile(transform: Tuple[int, int]) -> Filter:
+    @filter_numpy
+    def f(img: np.ndarray) -> np.ndarray:
+        return np.tile(img, (*transform, 1))
 
     return f
 
