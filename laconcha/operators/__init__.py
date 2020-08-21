@@ -8,3 +8,4 @@ from .blend_modes import (add, add_modulo, blend, darker, difference,
 from .channels import set_channel
 from .decorators import (operator_numpy, operator_opencv, operator_pil,
                          operator_scikit)
+from .mask import masking
