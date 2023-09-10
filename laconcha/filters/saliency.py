@@ -1,5 +1,3 @@
-# pylint: disable-all
-
 from cv2 import saliency
 
 import numpy as np

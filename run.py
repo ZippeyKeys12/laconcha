@@ -1,10 +1,7 @@
-# pylint: disable-all
-
 from typing import Any, Callable
 
 import streamlit as st
 
-import SessionState
 from laconcha import Image
 from laconcha.curves import (circular, cosine, cubic, exponential, inverse,
                              logarithm, quadratic, sine, smooth_step,
@@ -12,21 +9,26 @@ from laconcha.curves import (circular, cosine, cubic, exponential, inverse,
 from laconcha.filters import (ColorChannel, ColorMode, autocontrast,
                               bilateral_filter, bottom, brightness,
                               color_quantization, contrast, convert_color,
-                              crop, curve, equalize, fit, gaussian_blur,
-                              get_channel, hflip, hmirror, integral, invert,
-                              left, max_filter, mean_filter, median_filter,
-                              min_filter, mirror_tile, mode_filter, oct_mirror,
-                              posterize, quad_mirror, right, rotate,
-                              saturation, scale, sharpness, shear, shuffle,
-                              solarize, spread, swirl, swirl_flower, tile, top,
-                              translate, unsharpen, vflip, vmirror)
-from laconcha.generators import (from_function, from_rgb_functions,
-                                 gaussian_noise, maurer_rose, solid_color,
+                              crop, curve, equalize, fine_grained_saliency,
+                              fit, gaussian_blur, get_channel, hflip, hmirror,
+                              integral, invert, left, max_filter, mean_filter,
+                              median_filter, min_filter, mirror_tile,
+                              mode_filter, oct_mirror, posterize, quad_mirror,
+                              right, rotate, saturation, scale, sharpness,
+                              shear, shuffle, solarize,
+                              spectral_residual_saliency, spread, swirl,
+                              swirl_flower, threshold, tile, top, translate,
+                              unsharpen, vflip, vmirror)
+from laconcha.generators import (from_function, gaussian_noise, maurer_rose,
                                  white_noise)
 from laconcha.operators import (add, add_modulo, darker, difference,
                                 hard_light, lighter, overlay, screen,
                                 soft_light, subtract, subtract_modulo)
 from laconcha.util import format_name
+
+# from laconcha.operators import (add, add_modulo, blend, darker, difference,
+#                                 hard_light, lighter, overlay, screen,
+#                                 soft_light, subtract, subtract_modulo)
 
 
 def get_func(label: str, value: str = '') -> Callable:
@@ -37,8 +39,6 @@ def get_func(label: str, value: str = '') -> Callable:
 # SETUP
 
 img_path = 'test_images/stained-glass-1181864_1920.jpg'
-
-session_state: Any = SessionState.get(filters=[])
 
 generator_dict = {
     'File': (lambda: lambda size: crop(size)(Image.open(st.file_uploader('Choose an Image', ['png', 'jpg', 'jpeg']) or img_path)), lambda: []),
@@ -56,12 +56,16 @@ generator_dict = {
          st.slider('G', 0, 255, key='G1'),
          st.slider('B', 0, 255, key='B1'))
     ]),
+    'White Noise': (white_noise, lambda: [
+        st.number_input('Seed', 0, 100, 0)
+    ]),
     'Gaussian Noise': (gaussian_noise, lambda: [
         st.number_input('Seed', 0, 100, 0)
     ]),
-    'White Noise': (white_noise, lambda: [
-        st.number_input('Seed', 0, 100, 0)
-    ])
+    # 'Simplex Noise': (simplex_noise, lambda: [
+    #     st.number_input('Seed', 0, 100, 0),
+    #     st.slider('Frequency', .001, 1.0)
+    # ])
 }
 
 filter_dict = {
@@ -110,9 +114,10 @@ filter_dict = {
             format_func=lambda x: format_name(x.__name__))
     ]),
     'Equalize': (equalize, lambda i, h, w: []),
+    'Fine-Grained Saliency': (lambda: fine_grained_saliency, lambda i, h, w: []),
     'Fit': (fit, lambda i, h, w: [
-        st.slider('Height', 0, h, h, key=f'H{i}'),
-        st.slider('Width', 0, w, w, key=f'W{i}')
+        (st.slider('Height', 0, h, h, key=f'H{i}'),
+         st.slider('Width', 0, w, w, key=f'W{i}'))
     ]),
     'Gaussian Blur': (gaussian_blur, lambda i, h, w: [
         (st.slider('Kernel Width', 1, 7, 5, 2, key=f'W{i}'),
@@ -176,12 +181,11 @@ filter_dict = {
     'Solarize': (solarize, lambda i, h, w: [
         st.slider('Threshold', 0, 255, 128, key=f'B{i}')
     ]),
+    'Spectral Residual Saliency': (lambda: spectral_residual_saliency, lambda i, h, w: []),
     'Spread': (spread, lambda i, h, w: [
         st.slider('Distance', 0, 15, 3, key=f'D{i}')
     ]),
     'Swirl': (swirl, lambda i, h, w: [
-        (st.slider('Center X', 0, w, w // 2, key=f'X{i}'),
-         st.slider('Center Y', 0, h, h // 2, key=f'Y{i}')),
         st.slider('Strength', -100.0, 100.0, 0.0, key=f'S{i}'),
         st.slider('Radius', 1.0, float(max(h, w)), 100.0, key=f'R{i}')
     ]),
@@ -202,9 +206,12 @@ filter_dict = {
         st.slider('Strength', -100.0, 100.0, 0.0, key=f'S{i}'),
         st.slider('Radius', 1.0, float(max(h, w)), 100.0, key=f'R{i}')
     ]),
+    'Threshold': (threshold, lambda i, h, w: [
+        st.slider('Cutoff', 0, 255, key=f'C{i}')
+    ]),
     'Tile': (tile, lambda i, h, w: [
-        (st.slider('Height', 1, 10, 1),
-         st.slider('Width', 1, 10, 1))
+        (st.slider('Height', 1, 10, 1, key=f'H{i}'),
+         st.slider('Width', 1, 10, 1, key=f'W{i}'))
     ]),
     'Top': (top, lambda i, h, w: [
         st.slider('Pixels', 0, h, h, key=f'P{i}')
@@ -226,11 +233,11 @@ filter_dict = {
 
 st.header('Laconcha')
 
-num_filters = len(session_state.filters)
-if st.button('Add Filter'):
-    session_state.filters.append(num_filters)
-if st.button('Remove Filter') and num_filters > 0:
-    session_state.filters.pop()
+num_filters = st.number_input('Num. Filters', 0, value=0, step=1)
+# if st.button('Add Filter'):
+#     session_state.filters.append(num_filters)
+# if st.button('Remove Filter') and num_filters > 0:
+#     session_state.filters.pop()
 
 
 h = st.slider('Height', 0, 2000, 1000, 2)
@@ -241,13 +248,13 @@ img = g(*g_args())((h, w))  # type: ignore
 
 st.image(img.as_pil(), use_column_width=True)
 
-for i in session_state.filters:
+for i in range(num_filters):
     st.markdown('---')
 
     f, f_args = filter_dict[st.selectbox('Type', list(
         filter_dict.keys()), key=f'FilterType{i}')]
-    with st.spinner('Applying Filter...'):
-        img = img.apply_filter(f(*f_args(i, h, w)))  # type: ignore
-        h, w = img.size
+    # with st.spinner('Applying Filter...'):
+    img = img.apply_filter(f(*f_args(i, h, w)))  # type: ignore
+    h, w = img.size
 
     st.image(img.as_pil(), use_column_width=True)

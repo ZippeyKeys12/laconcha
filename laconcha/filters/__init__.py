@@ -1,6 +1,3 @@
-# pylint: disable-all
-# flake8: noqa
-
 from .base import identity
 from .cropping import bottom, crop, fit, left, right, top
 from .decorators import filter_numpy, filter_opencv, filter_pil, filter_scikit

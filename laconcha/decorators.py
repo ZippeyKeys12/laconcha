@@ -1,5 +1,3 @@
-# pylint: disable-all
-
 import inspect
 import random
 from enum import Enum
